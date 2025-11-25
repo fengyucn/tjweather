@@ -21,23 +21,87 @@ class ConfigManager {
   }
 
   private loadConfig() {
+    console.error('🔧 开始加载配置文件...');
+
     // 1. 用户配置目录
     const userConfigPath = path.join(os.homedir(), '.config', 'tjweather', '.env');
     if (fs.existsSync(userConfigPath)) {
-      const userConfig = dotenv.config({ path: userConfigPath });
-      if (userConfig.parsed) Object.assign(this.config, userConfig.parsed);
+      try {
+        // 使用dotenv.parse直接解析，避免全局状态污染
+        const userConfigContent = fs.readFileSync(userConfigPath, 'utf8');
+        const userParsed = dotenv.parse(userConfigContent);
+        Object.assign(this.config, userParsed);
+        console.error(`✅ 已加载用户配置: ${userConfigPath}`);
+        console.error(`   - API_KEY: ${userParsed.API_KEY ? '已设置' : '未设置'}`);
+        console.error(`   - JSON_ENDPOINT: ${userParsed.JSON_ENDPOINT || '使用默认'}`);
+      } catch (error) {
+        console.error(`⚠️ 用户配置文件读取失败: ${userConfigPath}`, error);
+      }
+    } else {
+      console.error(`ℹ️ 用户配置文件不存在: ${userConfigPath}`);
     }
 
-    // 2. 当前目录 .env
+    // 2. 当前目录 .env（覆盖用户配置）
     const localConfigPath = path.join(process.cwd(), '.env');
     if (fs.existsSync(localConfigPath)) {
-      const localConfig = dotenv.config({ path: localConfigPath });
-      if (localConfig.parsed) Object.assign(this.config, localConfig.parsed);
+      try {
+        // 使用dotenv.parse直接解析
+        const localConfigContent = fs.readFileSync(localConfigPath, 'utf8');
+        const localParsed = dotenv.parse(localConfigContent);
+        Object.assign(this.config, localParsed);
+        console.error(`✅ 已加载本地配置: ${localConfigPath}`);
+        console.error(`   - API_KEY: ${localParsed.API_KEY ? '已覆盖' : '未设置'}`);
+        console.error(`   - JSON_ENDPOINT: ${localParsed.JSON_ENDPOINT ? '已覆盖' : '使用用户配置'}`);
+      } catch (error) {
+        console.error(`⚠️ 本地配置文件读取失败: ${localConfigPath}`, error);
+      }
+    } else {
+      console.error(`ℹ️ 本地配置文件不存在: ${localConfigPath}`);
     }
 
-    // 3. 环境变量
-    this.config.API_KEY = process.env.API_KEY || this.config.API_KEY;
-    this.config.JSON_ENDPOINT = process.env.JSON_ENDPOINT || this.config.JSON_ENDPOINT || 'https://api.tjweather.com/beta';
+    // 3. 环境变量（最高优先级）
+    const envApiKey = process.env.API_KEY;
+    const envJsonEndpoint = process.env.JSON_ENDPOINT;
+    const envNcEndpoint = process.env.NC_ENDPOINT;
+
+    if (envApiKey) {
+      this.config.API_KEY = envApiKey;
+      console.error(`✅ 已从环境变量加载API_KEY`);
+    }
+    if (envJsonEndpoint) {
+      this.config.JSON_ENDPOINT = envJsonEndpoint;
+      console.error(`✅ 已从环境变量加载JSON_ENDPOINT`);
+    }
+    if (envNcEndpoint) {
+      this.config.NC_ENDPOINT = envNcEndpoint;
+      console.error(`✅ 已从环境变量加载NC_ENDPOINT`);
+    }
+
+    // 设置默认值
+    if (!this.config.JSON_ENDPOINT) {
+      this.config.JSON_ENDPOINT = 'https://api.tjweather.com/beta';
+    }
+    if (!this.config.NC_ENDPOINT) {
+      this.config.NC_ENDPOINT = 'https://api.tjweather.com/nc/beta';
+    }
+
+    console.error(`📋 最终配置:`);
+    console.error(`   - API_KEY: ${this.config.API_KEY ? '已设置' : '❌ 未设置'}`);
+    console.error(`   - JSON_ENDPOINT: ${this.config.JSON_ENDPOINT}`);
+    console.error(`   - NC_ENDPOINT: ${this.config.NC_ENDPOINT}`);
+  }
+
+  // 获取所有配置（用于调试）
+  getAllConfig(): any {
+    return { ...this.config };
+  }
+
+  // 获取配置加载路径（用于调试）
+  getConfigPaths(): { user: string; local: string } {
+    return {
+      user: path.join(os.homedir(), '.config', 'tjweather', '.env'),
+      local: path.join(process.cwd(), '.env')
+    };
   }
 
   get(key: string): string {
@@ -127,8 +191,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             fields: {
               type: 'string',
-              description: '气象要素，多个用逗号分隔 (如: ws100m,t2m,rh2m)。常用字段: ws100m(100米风速), t2m(2米温度), rh2m(2米湿度), tp(降水), ssrd(辐照度)',
-              default: 'ws100m',
+              description: '气象要素，多个用逗号分隔。免费字段: t2m(温度°C), rh2m(湿度%), tp(降水mm/hr), ssrd(辐射W/m²), slp(气压mb), cldt(云量)。高级字段需订阅: ws100m(100米风速m/s)等',
+              default: 't2m',
             },
             days: {
               type: 'number',
@@ -225,21 +289,42 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (name === 'weather_fields_info') {
       const fields = {
         global: {
-          'ws100m': { description: '100米风速', unit: 'm/s', maxDays: '10/15/30/45' },
-          't2m': { description: '2米温度', unit: '°C', maxDays: '10/15/30/45' },
-          'rh2m': { description: '2米相对湿度', unit: '%', maxDays: '10/15/30/45' },
-          'tp': { description: '降水', unit: 'mm/hr', maxDays: '10/15/30/45' },
-          'ssrd': { description: '辐照度', unit: 'W/㎡', maxDays: '10/15/30/45' },
-          'slp': { description: '海平面气压', unit: 'mb', maxDays: '10/15/30' },
-          'cldt': { description: '总云量', unit: '1', maxDays: '10/15/30/45' },
-          'gust': { description: '阵风', unit: 'm/s', maxDays: '10' },
+          // 基础免费字段 (已验证可用)
+          't2m': { description: '2米气温', unit: '°C', maxDays: '10/15/30/45', subscription: 'free', status: 'available' },
+          'rh2m': { description: '2米相对湿度', unit: '%', maxDays: '10/15/30/45', subscription: 'free', status: 'available' },
+          'tp': { description: '降水量', unit: 'mm/hr', maxDays: '10/15/30/45', subscription: 'free', status: 'available' },
+
+          // 基础字段 (需要订阅)
+          'ssrd': { description: '总太阳辐射', unit: 'W/㎡', maxDays: '10/15/30/45', subscription: 'premium', status: 'subscription_required' },
+          'slp': { description: '海平面气压', unit: 'mb', maxDays: '10/15/30', subscription: 'premium', status: 'subscription_required' },
+          'cldt': { description: '总云量', unit: '0-1', maxDays: '10/15/30/45', subscription: 'premium', status: 'subscription_required' },
+
+          // 风速风向字段
+          'ws10m': { description: '10米风速', unit: 'm/s', maxDays: '10/15/30/45', subscription: 'premium', status: 'available' },
+          'wd10m': { description: '10米风向', unit: '度', maxDays: '10/15/30/45', subscription: 'premium', status: 'available' },
+          'ws100m': { description: '100米风速', unit: 'm/s', maxDays: '10/15/30/45', subscription: 'premium', status: 'subscription_required' },
+          'wd100m': { description: '100米风向', unit: '度', maxDays: '10/15/30/45', subscription: 'premium', status: 'subscription_required' },
+
+          // 分量风场 (需要订阅)
+          'u10m': { description: '10米纬向风', unit: 'm/s', maxDays: '10/15/30/45', subscription: 'premium', status: 'subscription_required' },
+          'v10m': { description: '10米经向风', unit: 'm/s', maxDays: '10/15/30/45', subscription: 'premium', status: 'subscription_required' },
+          'u100m': { description: '100米纬向风', unit: 'm/s', maxDays: '10/15/30/45', subscription: 'premium', status: 'subscription_required' },
+          'v100m': { description: '100米经向风', unit: 'm/s', maxDays: '10/15/30/45', subscription: 'premium', status: 'subscription_required' },
+
+          // 其他字段
+          'gust': { description: '阵风', unit: 'm/s', maxDays: '10', subscription: 'premium', status: 'not_supported' },
+          'cldl': { description: '低云量', unit: '0-1', maxDays: '10/15/30/45', subscription: 'premium', status: 'unknown' },
+          'psz': { description: '降水类型', unit: '-', maxDays: '10/15/30/45', subscription: 'premium', status: 'unknown' },
+          'pres': { description: '气压', unit: 'mb', maxDays: '10/15/30/45', subscription: 'premium', status: 'unknown' },
+          'prer': { description: '降水率', unit: 'mm/hr', maxDays: '10/15/30/45', subscription: 'premium', status: 'unknown' },
         },
         china: {
-          'ws30m': { description: '30米风速', unit: 'm/s', maxDays: '10/15/30/45' },
-          'ws50m': { description: '50米风速', unit: 'm/s', maxDays: '10/15/30' },
-          'ws70m': { description: '70米风速', unit: 'm/s', maxDays: '10' },
-          'u30m': { description: '30米纬向风', unit: 'm/s', maxDays: '10/15/30/45' },
-          'v30m': { description: '30米经向风', unit: 'm/s', maxDays: '10/15/30/45' },
+          // 中国区域专用字段 (需要订阅)
+          'ws30m': { description: '30米风速', unit: 'm/s', maxDays: '10/15/30/45', subscription: 'premium', status: 'subscription_required' },
+          'ws50m': { description: '50米风速', unit: 'm/s', maxDays: '10/15/30', subscription: 'premium', status: 'subscription_required' },
+          'ws70m': { description: '70米风速', unit: 'm/s', maxDays: '10', subscription: 'premium', status: 'subscription_required' },
+          'u30m': { description: '30米纬向风', unit: 'm/s', maxDays: '10/15/30/45', subscription: 'premium', status: 'subscription_required' },
+          'v30m': { description: '30米经向风', unit: 'm/s', maxDays: '10/15/30/45', subscription: 'premium', status: 'subscription_required' },
         }
       };
 

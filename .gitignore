@@ -149,3 +149,103 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# 调试和测试文件（开发专用）
+debug-*.js
+debug-*.json
+test-*.js
+*_test.js
+*-test.js
+test-*.json
+compare-*.js
+mcp-debug*.js
+mcp-debug*.json
+test-*.js
+test-*.json
+debug-*.md
+
+# MCP调试工具
+mcp-inspector*
+
+# 本地开发配置文件
+mcp-env-config.json
+local-*.json
+*-local.json
+dev-*.json
+
+# 开发者专用文档（保留正式文档）
+**/FIELD_STATUS_REPORT.md
+**/MULTIFIELD_TEST_REPORT.md
+**/QUICK_DEBUG.md
+**/MCP_CLIENT_GUIDE.md
+
+# API密钥文件（保留示例）
+apikey*
+!apikey.example
+API_KEY*
+!API_KEY.example
+
+# 环境配置文件（保留示例）
+*.env
+*.env.*
+!.env.example
+.env.local
+.env.development
+.env.test
+.env.production
+
+# MCP配置文件（保留示例）
+mcp-*.json
+!mcp-*.example.json
+
+# 开发者配置目录
+.dev/
+.development/
+
+# 发布打包文件
+*.tgz
+npm-debug*.log
+
+# 锁定文件（可选，如果是团队开发建议保留）
+# package-lock.json
+# yarn.lock
+
+# 性能分析文件
+*.cpuprofile
+*.heapsnapshot
+
+# 编辑器会话文件
+*.sublime-project
+*.sublime-workspace
+
+# Vim恢复文件
+[._]*.s[a-w][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v-w]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# WebStorm配置文件
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+
+# VSCode用户配置
+.vscode/**/settings.json
+.vscode/**/launch.json
+.vscode/**/extensions.json
+!.vscode/**/settings.example.json
+
+# Docker开发文件
+docker-compose.override.yml
+docker-compose.dev.yml
+Dockerfile.dev
+
+# 本地服务器文件
+.server/
+
+# 生产环境构建文件
+dist-server/
+.next/

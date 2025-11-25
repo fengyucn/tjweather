@@ -1,30 +1,67 @@
-# 天机气象MCP服务器
+# tjweather-mcp
 
-基于Model Context Protocol的天机气象API服务器，支持与Claude Code等AI工具集成。
+[![npm version](https://badge.fury.io/js/tjweather-mcp.svg)](https://badge.fury.io/js/tjweather-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org/)
 
-## 安装
+天机气象API MCP服务器 - 基于Model Context Protocol的气象数据服务，支持与Claude Code等AI工具集成。
 
+## 🚀 快速安装
+
+### 方法1: 全局安装（推荐）
 ```bash
+npm install -g tjweather-mcp
+```
+
+### 方法2: 使用npx（无需安装）
+```bash
+npx tjweather-mcp
+```
+
+### 方法3: 本地开发
+```bash
+git clone https://github.com/yourusername/tjweather.git
+cd tjweather/tjweather-mcp
 npm install
 npm run build
 ```
 
-## 启动
+## ⚙️ 配置
 
-```bash
-npm start
+### 1. 设置环境变量
+
+创建 `~/.config/tjweather/.env` 文件：
+
+```env
+# 天机气象API密钥（必需）
+API_KEY=your_api_key_here
+
+# API端点地址（可选，有默认值）
+JSON_ENDPOINT=https://api.tjweather.com/beta
 ```
 
-## 配置MCP客户端
+### 2. 配置MCP客户端
 
-在Claude Code中添加：
+在Claude Code中添加到配置文件：
 
 ```json
 {
   "mcpServers": {
     "tjweather": {
-      "command": "/path/to/tjweather-mcp/dist/index.js",
+      "command": "tjweather-mcp",
       "args": []
+    }
+  }
+}
+```
+
+或者使用npx：
+```json
+{
+  "mcpServers": {
+    "tjweather": {
+      "command": "npx",
+      "args": ["tjweather-mcp"]
     }
   }
 }

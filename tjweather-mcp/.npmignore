@@ -1,0 +1,55 @@
+# 源代码目录
+src/
+tsconfig.json
+.eslintrc*
+.prettierrc*
+.vscode/
+.idea/
+
+# 依赖目录
+node_modules/
+
+# 测试文件
+test-*.js
+**/*.test.ts
+**/*.spec.ts
+__tests__/
+coverage/
+.nyc_output/
+
+# 日志文件
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# 环境变量文件
+.env
+.env.*
+!.env.example
+
+# 缓存目录
+.cache/
+.temp/
+.tmp/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 编辑器配置
+.vscode/
+.idea/
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 调试和开发工具
+debug-api.js
+debug-mcp-client.js
+mcp-debug.js
+compare-requests.js
+test-all-fields.js
+mcp-env-config.json

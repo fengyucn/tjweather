@@ -1,7 +1,7 @@
 {
-  "name": "tjweather",
+  "name": "tjweather-cli",
   "version": "1.0.0",
-  "description": "天津天气API命令行工具",
+  "description": "天机气象API命令行工具 - 基于天机气象API的完整CLI解决方案",
   "main": "dist/index.js",
   "bin": {
     "tjweather": "dist/index.js"
