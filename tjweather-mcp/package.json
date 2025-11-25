@@ -1,0 +1,36 @@
+{
+  "name": "tjweather-mcp",
+  "version": "1.0.0",
+  "description": "天津天气API MCP服务器",
+  "main": "dist/index.js",
+  "bin": {
+    "tjweather-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "jest"
+  },
+  "keywords": [
+    "mcp",
+    "weather",
+    "api",
+    "meteorology"
+  ],
+  "author": "fengyu",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.0",
+    "ts-node": "^10.9.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "tjweather",
+  "version": "1.0.0",
+  "description": "天津天气API命令行工具",
+  "main": "dist/index.js",
+  "bin": {
+    "tjweather": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "weather",
+    "cli",
+    "api",
+    "meteorology",
+    "forecast"
+  ],
+  "author": "fengyu",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "commander": "^11.1.0",
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.3",
+    "dotenv": "^16.3.1",
+    "csv-writer": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.0",
+    "ts-node": "^10.9.0",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

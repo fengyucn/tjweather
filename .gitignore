@@ -1,0 +1,151 @@
+# 天机气象API工具集 - Git忽略文件
+
+# 环境变量和敏感信息
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+*.key
+*.pem
+*.p12
+*.pfx
+
+# 依赖目录
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 构建输出
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# 编译生成的JavaScript文件
+*.js.map
+*.d.ts.map
+
+# 操作系统生成的文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 编辑器和IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志文件
+logs/
+*.log
+
+# 运行时数据
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# 覆盖率目录
+coverage/
+*.lcov
+.nyc_output/
+
+# 测试结果
+test-results/
+*.test.js
+coverage.json
+
+# 临时文件
+tmp/
+temp/
+.tmp/
+*.tmp
+*.temp
+
+# 下载的NC文件和测试数据
+*.nc
+*.ncf
+*.hdf
+*.hdf5
+weather_*.nc
+test_weather.nc
+highres_weather.nc
+
+# 备份文件
+*.bak
+*.backup
+*.old
+
+# 压缩文件
+*.zip
+*.tar.gz
+*.rar
+
+# 配置文件（保留模板）
+config/
+!config/*.example
+
+# 文档生成
+docs/api/
+.jekyll-cache/
+
+# 缓存
+.cache/
+.parcel-cache/
+
+# 全局包链接
+node_modules/.bin/
+
+# MCP相关
+.mcp/
+
+# Python相关（如果有数据分析脚本）
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Celery相关
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath解析文件
+*.sage.py
+
+# Spyder项目设置
+.spyderproject
+.spyproject
+
+# Rope项目设置
+.ropeproject
+
+# mkdocs文档
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
