@@ -25,7 +25,7 @@ fi
 echo "✅ npm版本: $(npm --version)"
 
 # 进入CLI工具目录
-cd "$(dirname "$0")/tjweather-cli"
+cd "$(dirname "$0")"
 
 echo ""
 echo "📦 安装依赖..."
