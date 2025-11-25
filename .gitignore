@@ -206,6 +206,12 @@ mcp-*.json
 *.tgz
 npm-debug*.log
 
+# npm发布相关文件（发布后不需要）
+npm-publish-*.md
+NPM_REGISTRATION_GUIDE.md
+publish.sh
+!publish.md
+
 # 锁定文件（可选，如果是团队开发建议保留）
 # package-lock.json
 # yarn.lock
